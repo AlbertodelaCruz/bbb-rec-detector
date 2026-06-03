@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mock BBB — banco de pruebas del detector de grabación</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background:#0d1b2a; color:#eee; margin:0; padding:60px 24px; }
+    h1 { font-size:18px; }
+    .navbar { display:flex; align-items:center; gap:16px; background:#142537;
+              padding:10px 16px; border-radius:8px; margin:16px 0 28px; }
+    .controls button { cursor:pointer; border:0; border-radius:6px; padding:10px 14px;
+              font-weight:600; margin-right:10px; }
+    .rec  { background:#2e7d32; color:#fff; }
+    .stop { background:#c62828; color:#fff; }
+    .none { background:#ef6c00; color:#fff; }
+    .hint { color:#9fb3c8; font-size:13px; max-width:620px; line-height:1.5; }
+    /* Réplica del indicador real de BBB */
+    #recBox { display:flex; align-items:center; }
+    .recIndicator { display:flex; align-items:center; }
+    .tippy { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:10px; }
+    .tippy.on  { background:#b00020; }
+    .tippy.off { border:2px solid #fff; border-radius:2em; }
+    .icon svg { display:block; }
+    .timer { font-variant-numeric: tabular-nums; font-weight:600; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Mock BigBlueButton — banco de pruebas</h1>
+
+  <div class="navbar">
+    <span style="opacity:.6">barra de navegación BBB →</span>
+    <div id="recBox"></div>
+  </div>
+
+  <div class="controls">
+    <button class="rec"  onclick="setState('recording')">▶ Grabando</button>
+    <button class="stop" onclick="setState('not-recording')">⏸ Pausado (sin grabar)</button>
+    <button class="none" onclick="setState('not-recordable')">✖ Sala no grabable</button>
+  </div>
+
+  <p class="hint">
+    Reproduce el indicador real (<code>data-test="recordingIndicator"</code>, cronómetro
+    <code>HH:MM:SS</code> y <code>aria-label</code>). Pulsa <b>Pausado</b> para simular el
+    olvido tras un descanso: la extensión debe mostrar el banner rojo, sonar y poner el
+    badge en <code>OFF</code>. Pulsa <b>Grabando</b> para ver cómo desaparece el aviso.
+  </p>
+
+  <script>
+    const SVG = `<svg height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#FFF" fill="#FFF" stroke-linecap="square">
+        <circle fill="none" stroke-width="1" r="9" cx="10" cy="10"></circle>
+        <circle stroke="#FFF" fill="#FFF" r="4" cx="10" cy="10"></circle></g></svg>`;
+    let secs = 3600, ticker = null;
+    const box = document.getElementById('recBox');
+
+    function fmt(s){ const h=String(Math.floor(s/3600)).padStart(2,'0');
+      const m=String(Math.floor(s%3600/60)).padStart(2,'0');
+      const ss=String(s%60).padStart(2,'0'); return `${h}:${m}:${ss}`; }
+
+    function setState(state){
+      clearInterval(ticker); ticker = null;
+      if (state === 'not-recordable'){ box.innerHTML = ''; return; }   // sin indicador
+      const recording = state === 'recording';
+      box.innerHTML = `
+        <div data-test="recordingIndicator" class="recIndicator">
+          <div class="tippy ${recording?'on':'off'}"
+               aria-label="${recording ? 'Esta sesión, ahora está siendo grabada'
+                                         : 'Esta sesión, no está siendo grabada'}">
+            <span data-test="mainWhiteboard" class="icon">${SVG}</span>
+            ${recording ? `<div class="timer">${fmt(secs)}</div>` : ''}
+          </div>
+        </div>`;
+      if (recording){
+        ticker = setInterval(() => {
+          secs++; const t = box.querySelector('.timer'); if (t) t.textContent = fmt(secs);
+        }, 1000);
+      }
+    }
+
+    setState('recording'); // estado inicial
+  </script>
+</body>
+</html>
