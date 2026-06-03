@@ -17,18 +17,35 @@ Chromium en **modo desarrollador** (no requiere la Chrome Web Store).
 
 ## Obtener los ficheros
 
-Si aún no tienes la carpeta, clónala o descárgala y descomprímela en una ubicación
-estable (no la borres después: la extensión se carga **desde** esa carpeta):
+Necesitas la carpeta del proyecto en una ubicación **estable**: no la borres ni la
+muevas después, porque la extensión se carga **desde** esa carpeta.
+
+### Opción A — Descargar el ZIP desde GitHub (sin git)
+
+1. Abre la página del repositorio en GitHub.
+2. Pulsa el botón verde **`< > Code`** y elige **Download ZIP**.
+3. Descomprime el `.zip` en una carpeta permanente (p. ej. tu carpeta de documentos,
+   **no** en "Descargas" temporal).
+4. Al descomprimir, GitHub suele crear una subcarpeta con sufijo de rama, p. ej.
+   `bbb-rec-detector-main/`. Esa es la carpeta que cargarás en el navegador
+   (la que contiene directamente `manifest.json`).
+
+> En Windows: clic derecho sobre el ZIP → **Extraer todo**.
+> En macOS: doble clic sobre el ZIP.
+> En Linux: `unzip bbb-rec-detector-main.zip`.
+
+### Opción B — Clonar con git
 
 ```bash
 git clone <url-del-repositorio> bbb-rec-detector
-# o descomprime el .zip en una carpeta permanente
 ```
 
-Comprueba que dentro está el `manifest.json`:
+### Comprobación
+
+Verifica que dentro está el `manifest.json`:
 
 ```bash
-ls bbb-rec-detector/manifest.json
+ls bbb-rec-detector/manifest.json     # o bbb-rec-detector-main/manifest.json
 ```
 
 ## Instalación en Chrome / Brave / Opera / Vivaldi
